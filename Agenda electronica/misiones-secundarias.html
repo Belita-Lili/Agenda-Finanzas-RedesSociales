@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misiones Secundarias — Liliana 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   ROOT
+═══════════════════════════════════════════ */
+:root {
+  --c1:#009092; --c2:#00c6c7; --c3:#00ffff; --c4:#8bffff; --c5:#c4ffff;
+  --bg:#040f10; --bg2:#071518; --bg3:#0a1e21;
+  --card:rgba(0,144,146,0.07); --card-b:rgba(0,198,199,0.18);
+  --text:#e8fdfd; --text-mid:#8bffff;
+  --text-dim:rgba(139,255,255,0.45); --text-muted:rgba(139,255,255,0.28);
+  --danger:#ff6b8a; --warn:#ffca6b; --success:#00ffba; --violet:#b06bff;
+  --amber:#f0a040; --rose:#ff5e8a; --sky:#40c8f0;
+
+  /* category colors */
+  --col-exp:   #f0a040;   /* Experiencias */
+  --col-fis:   #00c6c7;   /* Físicas */
+  --col-fin:   #b06bff;   /* Finanzas */
+  --col-soc:   #ff5e8a;   /* Sociales */
+  --col-men:   #40c8f0;   /* Mental/Crecimiento */
+
+  --font-d: 'Syne', sans-serif;
+  --font-m: 'JetBrains Mono', monospace;
+  --r: 12px; --rl: 18px; --rx: 26px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: var(--font-d);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:0;
+  background:
+    radial-gradient(ellipse 55% 45% at 10% 15%, rgba(0,144,146,.2) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 90% 85%, rgba(0,198,199,.13) 0%, transparent 50%),
+    radial-gradient(ellipse 30% 30% at 60% 40%, rgba(176,107,255,.06) 0%, transparent 50%);
+  pointer-events:none;
+}
+body::after {
+  content:'';
+  position:fixed; inset:0; z-index:0;
+  background-image:
+    linear-gradient(rgba(0,255,255,.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,255,.022) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events:none;
+}
+
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--c1); border-radius:2px; }
+
+/* ═══════════════════════════════════════════
+   SAVE STATUS
+═══════════════════════════════════════════ */
+#save-status {
+  position:fixed; bottom:20px; right:20px; z-index:9000;
+  background:var(--bg3); border:1px solid var(--c1); border-radius:40px;
+  padding:8px 16px; font-family:var(--font-m); font-size:.7rem; color:var(--text-dim);
+  display:flex; align-items:center; gap:8px;
+  box-shadow:0 4px 18px rgba(0,144,146,.2); transition:all .3s;
+}
+#save-dot { width:7px; height:7px; border-radius:50%; background:var(--success); transition:all .3s; }
+#save-status.saving #save-dot { background:var(--warn); animation:blink .6s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.app { max-width:1320px; margin:0 auto; padding:0 22px 80px; position:relative; z-index:1; }
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+.header {
+  padding:28px 0 22px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; flex-wrap:wrap;
+  border-bottom:1px solid rgba(0,255,255,.08);
+  margin-bottom:26px;
+}
+.h-left { display:flex; align-items:center; gap:16px; }
+.avatar {
+  width:52px; height:52px; border-radius:50%;
+  background:linear-gradient(135deg,var(--c1),var(--c3));
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.5rem; flex-shrink:0;
+  box-shadow:0 0 0 1px rgba(0,255,255,.2), 0 0 24px rgba(0,255,255,.3);
+  animation:aring 3s ease-in-out infinite;
+}
+@keyframes aring {
+  0%,100% { box-shadow:0 0 0 1px rgba(0,255,255,.2),0 0 24px rgba(0,255,255,.3); }
+  50%      { box-shadow:0 0 0 3px rgba(0,255,255,.1),0 0 40px rgba(0,255,255,.55); }
+}
+.h-name {
+  font-size:1.6rem; font-weight:800;
+  background:linear-gradient(90deg,var(--c3),var(--c4));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.h-sub { font-size:.74rem; color:var(--text-dim); margin-top:2px; }
+
+/* ═══════════════════════════════════════════
+   HERO KPI STRIP
+═══════════════════════════════════════════ */
+.kpi-strip {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));
+  gap:12px;
+  margin-bottom:26px;
+}
+.kpi {
+  background:var(--card); border:1px solid var(--card-b);
+  border-radius:var(--rl); padding:16px 18px;
+  text-align:center; transition:all .22s;
+}
+.kpi:hover { border-color:rgba(0,255,255,.28); box-shadow:0 6px 30px rgba(0,144,146,.14); }
+.kpi-val {
+  font-family:var(--font-m); font-size:2rem; line-height:1;
+  color:var(--c3); text-shadow:0 0 18px rgba(0,255,255,.4);
+}
+.kpi-lbl { font-size:.66rem; color:var(--text-muted); margin-top:5px; letter-spacing:.06em; text-transform:uppercase; }
+
+/* Big progress ring */
+.ring-hero {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:10px; padding:20px 22px;
+  background:var(--card); border:1px solid var(--card-b); border-radius:var(--rl);
+  position:relative; overflow:hidden;
+}
+.ring-hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,255,255,.04), transparent);
+  pointer-events:none;
+}
+.ring-svg { width:110px; height:110px; transform:rotate(-90deg); }
+.ring-bg   { fill:none; stroke:rgba(0,255,255,.07); stroke-width:9; }
+.ring-fill {
+  fill:none; stroke:url(#rg); stroke-width:9;
+  stroke-linecap:round; stroke-dasharray:314;
+  transition:stroke-dashoffset 1.4s cubic-bezier(.34,1.56,.64,1);
+}
+.ring-center {
+  position:absolute;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:2px;
+}
+.ring-pct  { font-family:var(--font-m); font-size:1.4rem; color:var(--c3); line-height:1; }
+.ring-done { font-size:.62rem; color:var(--text-muted); }
+
+/* ═══════════════════════════════════════════
+   CONTROLS BAR
+═══════════════════════════════════════════ */
+.controls {
+  display:flex; align-items:center; gap:10px;
+  flex-wrap:wrap; margin-bottom:20px;
+}
+.search-wrap {
+  flex:1; min-width:200px; position:relative;
+}
+.search-wrap::before {
+  content:'🔍'; position:absolute; left:14px; top:50%; transform:translateY(-50%);
+  font-size:.85rem; pointer-events:none;
+}
+.search-input {
+  width:100%; background:rgba(0,255,255,.04); border:1px solid rgba(0,255,255,.15);
+  border-radius:40px; padding:10px 14px 10px 40px;
+  color:var(--text); font-family:var(--font-d); font-size:.82rem; outline:none;
+  transition:border-color .2s;
+}
+.search-input:focus { border-color:var(--c2); }
+.search-input::placeholder { color:var(--text-muted); }
+
+.filter-group { display:flex; gap:6px; flex-wrap:wrap; }
+
+.fbtn {
+  font-family:var(--font-d); font-size:.7rem; font-weight:700;
+  letter-spacing:.05em; padding:8px 16px; border-radius:40px;
+  border:1px solid rgba(0,255,255,.15); background:transparent;
+  color:var(--text-dim); cursor:pointer; transition:all .2s;
+  white-space:nowrap; display:flex; align-items:center; gap:6px;
+}
+.fbtn:hover { border-color:var(--c2); color:var(--c4); }
+.fbtn.active { background:linear-gradient(135deg,var(--c1),var(--c2)); border-color:transparent; color:var(--bg); box-shadow:0 4px 16px rgba(0,198,199,.35); }
+.fbtn.cat-exp.active   { background:linear-gradient(135deg,#b07010,var(--col-exp)); border-color:transparent; color:#fff; }
+.fbtn.cat-fis.active   { background:linear-gradient(135deg,var(--c1),var(--c2));    border-color:transparent; color:var(--bg); }
+.fbtn.cat-fin.active   { background:linear-gradient(135deg,#6c3483,var(--col-fin)); border-color:transparent; color:#fff; }
+.fbtn.cat-soc.active   { background:linear-gradient(135deg,#c0392b,var(--col-soc)); border-color:transparent; color:#fff; }
+.fbtn.cat-men.active   { background:linear-gradient(135deg,#1a6b8a,var(--col-men)); border-color:transparent; color:#fff; }
+
+.sort-btn {
+  font-family:var(--font-m); font-size:.7rem; padding:8px 14px;
+  border-radius:40px; border:1px solid rgba(0,255,255,.15);
+  background:transparent; color:var(--text-dim); cursor:pointer; transition:all .2s;
+}
+.sort-btn:hover { border-color:var(--c2); color:var(--c4); }
+
+/* ═══════════════════════════════════════════
+   CATEGORY PROGRESS BARS
+═══════════════════════════════════════════ */
+.cat-progress {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:12px; margin-bottom:26px;
+}
+.cat-bar-card {
+  background:var(--card); border:1px solid var(--card-b); border-radius:var(--rl);
+  padding:14px 16px; cursor:pointer; transition:all .22s;
+}
+.cat-bar-card:hover { border-color:rgba(0,255,255,.28); transform:translateY(-2px); }
+.cat-bar-card.active-cat { border-color:var(--c2); box-shadow:0 0 18px rgba(0,198,199,.18); }
+.cat-bar-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.cat-bar-name { font-size:.78rem; font-weight:700; display:flex; align-items:center; gap:6px; }
+.cat-bar-count { font-family:var(--font-m); font-size:.72rem; color:var(--text-dim); }
+.cat-bar-track { height:5px; background:rgba(0,255,255,.06); border-radius:3px; overflow:hidden; }
+.cat-bar-fill  { height:100%; border-radius:3px; transition:width 1s ease; }
+
+/* ═══════════════════════════════════════════
+   MISSIONS GRID
+═══════════════════════════════════════════ */
+.missions-container {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+  gap:14px;
+}
+
+.mission-card {
+  background:var(--card); border:1px solid var(--card-b);
+  border-radius:var(--rl); padding:18px 20px;
+  cursor:pointer; transition:all .25s;
+  position:relative; overflow:hidden;
+  animation:cardIn .3s ease both;
+}
+@keyframes cardIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+.mission-card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; border-radius:3px 0 0 3px;
+  transition:width .25s;
+}
+.mission-card:hover { border-color:rgba(0,255,255,.3); transform:translateY(-3px); box-shadow:0 10px 40px rgba(0,0,0,.35); }
+.mission-card:hover::before { width:5px; }
+
+/* category accent colors */
+.mission-card.cat-Experiencias::before     { background:var(--col-exp); }
+.mission-card.cat-Físicas::before          { background:var(--col-fis); }
+.mission-card.cat-Finanzas::before         { background:var(--col-fin); }
+.mission-card.cat-Sociales::before         { background:var(--col-soc); }
+.mission-card.cat-Mental::before           { background:var(--col-men); }
+
+/* completed state */
+.mission-card.done {
+  background:rgba(0,255,186,.04);
+  border-color:rgba(0,255,186,.22);
+  opacity:.75;
+}
+.mission-card.done::after {
+  content:'✓';
+  position:absolute; top:12px; right:14px;
+  width:24px; height:24px; border-radius:50%;
+  background:rgba(0,255,186,.15); border:1px solid rgba(0,255,186,.35);
+  color:var(--success); font-size:.8rem; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.mission-top {
+  display:flex; align-items:flex-start; gap:12px; margin-bottom:10px;
+}
+.mission-emoji {
+  width:38px; height:38px; border-radius:10px;
+  background:rgba(0,255,255,.06); border:1px solid rgba(0,255,255,.1);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.2rem; flex-shrink:0;
+}
+.mission-info { flex:1; min-width:0; }
+.mission-title {
+  font-size:.88rem; font-weight:700; color:var(--text);
+  line-height:1.3; margin-bottom:4px;
+}
+.mission-card.done .mission-title { text-decoration:line-through; color:var(--text-muted); }
+
+.cat-chip {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:.62rem; font-weight:700; letter-spacing:.05em;
+  padding:2px 9px; border-radius:20px; text-transform:uppercase;
+}
+.chip-Experiencias { background:rgba(240,160,64,.12); color:var(--col-exp); border:1px solid rgba(240,160,64,.2); }
+.chip-Físicas      { background:rgba(0,198,199,.12);  color:var(--col-fis); border:1px solid rgba(0,198,199,.2); }
+.chip-Finanzas     { background:rgba(176,107,255,.12); color:var(--col-fin); border:1px solid rgba(176,107,255,.2); }
+.chip-Sociales     { background:rgba(255,94,138,.12);  color:var(--col-soc); border:1px solid rgba(255,94,138,.2); }
+.chip-Mental       { background:rgba(64,200,240,.12);  color:var(--col-men); border:1px solid rgba(64,200,240,.2); }
+
+/* difficulty dots */
+.mission-meta {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:10px;
+}
+.diff-dots { display:flex; gap:4px; }
+.diff-dot {
+  width:7px; height:7px; border-radius:50%;
+  background:rgba(0,255,255,.12); border:1px solid rgba(0,255,255,.1);
+}
+.diff-dot.on { background:var(--c2); border-color:var(--c2); }
+
+.mission-note-btn {
+  font-size:.65rem; color:var(--text-muted); background:none; border:none;
+  cursor:pointer; transition:color .18s; display:flex; align-items:center; gap:4px;
+}
+.mission-note-btn:hover { color:var(--c4); }
+
+/* note area */
+.mission-note {
+  margin-top:10px; padding:8px 12px;
+  background:rgba(0,255,255,.03); border:1px solid rgba(0,255,255,.08);
+  border-radius:var(--r); font-size:.78rem; font-style:italic;
+  color:var(--text-dim); line-height:1.5;
+  display:none;
+}
+.mission-note.open { display:block; animation:fadein .2s ease; }
+.note-input {
+  width:100%; background:transparent; border:none; outline:none;
+  color:var(--text-dim); font-family:var(--font-d); font-size:.78rem;
+  font-style:italic; resize:none; min-height:40px;
+  font-size:.78rem; line-height:1.5;
+}
+.note-input::placeholder { color:var(--text-muted); }
+
+/* ═══════════════════════════════════════════
+   COMPLETED CELEBRATION
+═══════════════════════════════════════════ */
+.celebrate-overlay {
+  position:fixed; inset:0; background:rgba(4,15,16,.92);
+  backdrop-filter:blur(8px); z-index:2000;
+  display:none; align-items:center; justify-content:center;
+}
+.celebrate-overlay.open { display:flex; }
+.celebrate-box {
+  background:var(--bg3); border:1px solid rgba(0,255,255,.3);
+  border-radius:var(--rx); padding:40px 50px; text-align:center;
+  max-width:500px;
+  animation:pop .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes pop { from{transform:scale(.6);opacity:0} to{transform:none;opacity:1} }
+.cel-emoji { font-size:4rem; margin-bottom:16px; animation:bounce 1.2s infinite; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+.cel-title { font-size:1.4rem; font-weight:800; color:var(--c3); margin-bottom:8px; }
+.cel-sub   { font-size:.88rem; color:var(--text-dim); margin-bottom:28px; line-height:1.5; }
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+#toasts {
+  position:fixed; top:16px; right:16px; z-index:9999;
+  display:flex; flex-direction:column; gap:7px;
+}
+.toast {
+  background:var(--bg3); border:1px solid var(--c1); border-radius:var(--r);
+  padding:10px 16px; font-size:.8rem; color:var(--text-mid);
+  animation:tin .3s ease; max-width:280px;
+  box-shadow:0 4px 18px rgba(0,144,146,.35);
+}
+@keyframes tin { from{transform:translateX(110%);opacity:0} }
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn {
+  font-family:var(--font-d); font-weight:700; font-size:.74rem;
+  letter-spacing:.06em; padding:10px 22px; border-radius:40px;
+  border:none; cursor:pointer; transition:all .22s;
+}
+.btn-p { background:linear-gradient(135deg,var(--c1),var(--c2)); color:var(--bg); box-shadow:0 4px 16px rgba(0,198,199,.3); }
+.btn-p:hover { box-shadow:0 6px 26px rgba(0,198,199,.5); transform:translateY(-1px); }
+.btn-g { background:transparent; border:1px solid rgba(0,255,255,.2); color:var(--text-dim); }
+.btn-g:hover { border-color:var(--c2); color:var(--c4); }
+
+/* ═══════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════ */
+.empty-state {
+  text-align:center; padding:60px 20px;
+  color:var(--text-muted); grid-column:1/-1;
+}
+.empty-icon { font-size:3rem; margin-bottom:16px; opacity:.4; }
+.empty-text { font-size:.88rem; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media(max-width:640px) {
+  .missions-container { grid-template-columns:1fr; }
+  .kpi-strip { grid-template-columns:1fr 1fr 1fr; }
+}
+
+/* ═══════════════════════════════════════════
+   COMPLETED LIST SECTION
+═══════════════════════════════════════════ */
+.completed-section {
+  margin-top:32px;
+  border-top:1px solid rgba(0,255,255,.07);
+  padding-top:22px;
+}
+.sec-lbl {
+  font-size:.66rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--text-muted); margin-bottom:14px;
+  display:flex; align-items:center; gap:10px;
+}
+.sec-lbl::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,rgba(0,255,255,.15),transparent); }
+
+/* CONFETTI (CSS only) */
+.confetti-wrap { position:fixed; inset:0; pointer-events:none; z-index:1999; overflow:hidden; }
+.confetti-piece {
+  position:absolute; width:8px; height:8px; border-radius:2px;
+  animation:fall 3s ease-in forwards;
+}
+@keyframes fall {
+  0%   { transform:translateY(-20px) rotate(0deg); opacity:1; }
+  100% { transform:translateY(100vh) rotate(720deg); opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<!-- SAVE STATUS -->
+<div id="save-status"><div id="save-dot"></div><span id="save-text">Guardado</span></div>
+<div id="toasts"></div>
+
+<!-- GRADIENT DEF FOR RING -->
+<svg style="position:absolute;width:0;height:0">
+  <defs>
+    <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#009092"/>
+      <stop offset="100%" style="stop-color:#00ffff"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- CONFETTI CONTAINER -->
+<div class="confetti-wrap" id="confetti-wrap"></div>
+
+<!-- CELEBRATION OVERLAY -->
+<div class="celebrate-overlay" id="cel-overlay">
+  <div class="celebrate-box">
+    <div class="cel-emoji" id="cel-emoji">⚔️</div>
+    <div class="cel-title" id="cel-title">¡Misión Completada!</div>
+    <div class="cel-sub" id="cel-sub">Has desbloqueado una nueva experiencia de vida.</div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="closeCelebration()">⚡ Continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="h-left">
+      <div class="avatar">⚔️</div>
+      <div>
+        <div class="h-name">Misiones Secundarias</div>
+        <div class="h-sub">100 experiencias · Liliana 2026</div>
+      </div>
+    </div>
+    <div style="font-family:var(--font-m);font-size:.73rem;color:var(--text-dim)" id="hdate"></div>
+  </header>
+
+  <!-- KPI STRIP -->
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;margin-bottom:26px;align-items:start">
+
+    <!-- Ring -->
+    <div class="ring-hero" style="min-width:170px">
+      <div style="position:relative;width:110px;height:110px">
+        <svg class="ring-svg" viewBox="0 0 100 100">
+          <circle class="ring-bg"   cx="50" cy="50" r="42"/>
+          <circle class="ring-fill" cx="50" cy="50" r="42" id="main-ring" style="stroke-dashoffset:314"/>
+        </svg>
+        <div class="ring-center" style="inset:0;position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div class="ring-pct" id="ring-pct">0%</div>
+          <div class="ring-done" id="ring-done">0 / 100</div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--c2);text-transform:uppercase">Progreso</div>
+      </div>
+    </div>
+
+    <!-- KPIs grid -->
+    <div class="kpi-strip" style="margin-bottom:0">
+      <div class="kpi" id="kpi-done-el">
+        <div class="kpi-val" id="kpi-done">0</div>
+        <div class="kpi-lbl">Completadas</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val" id="kpi-pend">100</div>
+        <div class="kpi-lbl">Pendientes</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val" style="color:var(--col-exp)" id="kpi-exp">0</div>
+        <div class="kpi-lbl">Experiencias</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val" style="color:var(--col-fis)" id="kpi-fis">0</div>
+        <div class="kpi-lbl">Físicas</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val" style="color:var(--col-fin)" id="kpi-fin">0</div>
+        <div class="kpi-lbl">Finanzas</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val" style="color:var(--col-men)" id="kpi-men">0</div>
+        <div class="kpi-lbl">Mentales</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY PROGRESS BARS -->
+  <div class="cat-progress" id="cat-bars"></div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="search-wrap">
+      <input class="search-input" id="search-input" placeholder="Buscar misión..." oninput="renderMissions()">
+    </div>
+    <div class="filter-group" id="filter-btns">
+      <button class="fbtn active" data-filter="all"     onclick="setFilter('all',this)">🌐 Todas</button>
+      <button class="fbtn cat-exp" data-filter="Experiencias" onclick="setFilter('Experiencias',this)">🌍 Experiencias</button>
+      <button class="fbtn cat-fis" data-filter="Físicas"     onclick="setFilter('Físicas',this)">💪 Físicas</button>
+      <button class="fbtn cat-fin" data-filter="Finanzas"    onclick="setFilter('Finanzas',this)">💰 Finanzas</button>
+      <button class="fbtn cat-soc" data-filter="Sociales"    onclick="setFilter('Sociales',this)">🤝 Sociales</button>
+      <button class="fbtn cat-men" data-filter="Mental"      onclick="setFilter('Mental',this)">🧠 Mental</button>
+      <button class="fbtn" data-filter="done"           onclick="setFilter('done',this)">✅ Hechas</button>
+      <button class="fbtn" data-filter="pending"        onclick="setFilter('pending',this)">⏳ Pendientes</button>
+    </div>
+    <button class="sort-btn" id="sort-btn" onclick="toggleSort()">Ordenar ↕</button>
+  </div>
+
+  <!-- MISSIONS GRID -->
+  <div class="missions-container" id="missions-grid"></div>
+
+</div><!-- /app -->
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA — 100 MISSIONS
+═══════════════════════════════════════════ */
+const MISSIONS_RAW = [
+  // ── EXPERIENCIAS (40) ──
+  { id:'e01', title:'Viajar solo',                           cat:'Experiencias', emoji:'✈️', diff:3, tip:'Elige un destino cercano, planea lo básico y déjate perder el resto.' },
+  { id:'e02', title:'Grabar un vídeo en público con gente viendo', cat:'Experiencias', emoji:'🎬', diff:3, tip:'La incomodidad dura 30 segundos. El recuerdo, siempre.' },
+  { id:'e03', title:'Hacer una canción completa',            cat:'Experiencias', emoji:'🎵', diff:3, tip:'No necesita ser perfecta. Solo necesita existir.' },
+  { id:'e04', title:'Enfrentar la dismorfia corporal',       cat:'Experiencias', emoji:'🪞', diff:5, tip:'Escríbete una carta desde el cuerpo que ya eres hoy.' },
+  { id:'e05', title:'Volver a grabar un podcast',            cat:'Experiencias', emoji:'🎙️', diff:2, tip:'Un episodio solo, sin presión de continuidad.' },
+  { id:'e06', title:'Invitar a salir/comer a alguien desconocido', cat:'Experiencias', emoji:'🍽️', diff:4, tip:'El peor escenario es un "no". El mejor: una historia nueva.' },
+  { id:'e07', title:'Actuar en una película o obra de teatro', cat:'Experiencias', emoji:'🎭', diff:4, tip:'Busca grupos de teatro amateur. Son los mejores.' },
+  { id:'e08', title:'Cantar en público',                    cat:'Experiencias', emoji:'🎤', diff:4, tip:'Karaoke con extraños cuenta. Ir un martes random también.' },
+  { id:'e09', title:'Dormir en un lugar incómodo (camping)', cat:'Experiencias', emoji:'⛺', diff:2, tip:'El frío y las estrellas te cambian la perspectiva.' },
+  { id:'e10', title:'Perderte en una ciudad nueva',         cat:'Experiencias', emoji:'🗺️', diff:2, tip:'Sin GPS. Solo camina y siente el lugar.' },
+  { id:'e11', title:'Hacer un mueble desde cero (carpintería)', cat:'Experiencias', emoji:'🪚', diff:3, tip:'Hay talleres de un día. La sensación de "yo lo hice" no tiene precio.' },
+  { id:'e12', title:'Hablar con un desconocido interesante', cat:'Experiencias', emoji:'💬', diff:2, tip:'Aeropuertos, museos, cafeterías. Atrévete a empezar.' },
+  { id:'e13', title:'Ir a un evento al que no irías normalmente', cat:'Experiencias', emoji:'🎪', diff:2, tip:'Opera, lucha libre, feria de coleccionistas. Sorpréndete.' },
+  { id:'e14', title:'Probar comida totalmente nueva',        cat:'Experiencias', emoji:'🍱', diff:1, tip:'Sin ver el menú en Google primero. Solo confía.' },
+  { id:'e15', title:'Aprender frases básicas de otro idioma', cat:'Experiencias', emoji:'🌐', diff:1, tip:'20 frases de japonés, árabe o swahili. Lo que te llame.' },
+  { id:'e16', title:'Enfrentar mi miedo a las arañas',      cat:'Experiencias', emoji:'🕷️', diff:4, tip:'Terapia de exposición gradual. Empieza con fotos.' },
+  { id:'e17', title:'Enfrentar la claustrofobia',           cat:'Experiencias', emoji:'📦', diff:4, tip:'Cueva pequeña, ascensor, escape room. Paso a paso.' },
+  { id:'e18', title:'Enfrentar mi miedo a las alturas',     cat:'Experiencias', emoji:'🏔️', diff:4, tip:'Mirador, escalada en roca, torre de observación.' },
+  { id:'e19', title:'Pasar un día sin dinero',              cat:'Experiencias', emoji:'💸', diff:2, tip:'Descubrirás que la mayoría de lo mejor es gratis.' },
+  { id:'e20', title:'Ir de día de campo solo',              cat:'Experiencias', emoji:'🌿', diff:2, tip:'Lleva un cuaderno. La soledad al aire libre es medicina.' },
+  { id:'e21', title:'Visitar un museo y realmente analizarlo', cat:'Experiencias', emoji:'🏛️', diff:1, tip:'3 piezas máximo. Estúdialas de verdad, no las fotees.' },
+  { id:'e22', title:'Ir a un concierto o evento cultural',  cat:'Experiencias', emoji:'🎶', diff:1, tip:'Solo o con alguien nuevo. Que la música te encuentre.' },
+  { id:'e23', title:'Tomar fotos con intención (modo manual)', cat:'Experiencias', emoji:'📷', diff:2, tip:'Sin filtros, sin modo automático. Aprende el triángulo de exposición.' },
+  { id:'e24', title:'Hacer doblaje para una producción',    cat:'Experiencias', emoji:'🎙️', diff:3, tip:'Busca proyectos indie en comunidades de voice acting.' },
+  { id:'e25', title:'Ver un amanecer completo',             cat:'Experiencias', emoji:'🌅', diff:1, tip:'Pon la alarma, sal de la ciudad si puedes.' },
+  { id:'e26', title:'Ver un atardecer completo',            cat:'Experiencias', emoji:'🌇', diff:1, tip:'Sin teléfono los últimos 10 minutos.' },
+  { id:'e27', title:'Viajar ligero (solo mochila)',         cat:'Experiencias', emoji:'🎒', diff:2, tip:'5 días, una mochila de 20L. Te liberará.' },
+  { id:'e28', title:'Aprender historia de tu ciudad',       cat:'Experiencias', emoji:'📖', diff:1, tip:'Tour de a pie, libro local o visita al archivo histórico.' },
+  { id:'e29', title:'Hacer turismo en tu propia zona',      cat:'Experiencias', emoji:'🏘️', diff:1, tip:'Actúa como turista por un día en tu ciudad.' },
+  { id:'e30', title:'Subirse a algo que dé miedo (parapente, tirolesa)', cat:'Experiencias', emoji:'🪂', diff:4, tip:'La adrenalina post-miedo es la mejor droga legal.' },
+  { id:'e31', title:'Aprender a orientarte sin GPS',        cat:'Experiencias', emoji:'🧭', diff:2, tip:'Brújula + mapa de papel. Un fin de semana en el campo.' },
+  { id:'e32', title:'Pasar tiempo en naturaleza sin distracciones', cat:'Experiencias', emoji:'🌲', diff:2, tip:'48 horas sin pantallas. Cuaderno y silencio.' },
+  { id:'e33', title:'Dar una plática sobre algo importante', cat:'Experiencias', emoji:'🎤', diff:4, tip:'TED local, meetup, clase en tu comunidad. Tu voz importa.' },
+  { id:'e34', title:'Escribir y publicar un ensayo personal', cat:'Experiencias', emoji:'✍️', diff:3, tip:'Medium, Substack o tu propio blog. No esperes a estar listo.' },
+  { id:'e35', title:'Aprender a bailar un estilo nuevo',    cat:'Experiencias', emoji:'💃', diff:2, tip:'Salsa, swing, breakdance. Una clase de prueba basta para empezar.' },
+  { id:'e36', title:'Organizar un evento para otros',       cat:'Experiencias', emoji:'🎉', diff:3, tip:'Cena temática, cine en casa, taller. Tú como anfitriona.' },
+  { id:'e37', title:'Hacer voluntariado un fin de semana',  cat:'Experiencias', emoji:'🤲', diff:1, tip:'Refugio, banco de alimentos, reforestación. Elige lo que te mueva.' },
+  { id:'e38', title:'Aprender fotografía de retrato',       cat:'Experiencias', emoji:'🖼️', diff:2, tip:'Una sesión con amigos. Aprende luz natural y composición.' },
+  { id:'e39', title:'Aprender a hacer color grading básico', cat:'Experiencias', emoji:'🎨', diff:2, tip:'DaVinci Resolve es gratis. Un tutorial de 2 horas te cambia el ojo.' },
+  { id:'e40', title:'Resolver el caos con Buffer/herramientas digitales', cat:'Experiencias', emoji:'⚙️', diff:2, tip:'Documenta tu flujo actual, identifica el cuello de botella y simplifica.' },
+
+  // ── FÍSICAS (20) ──
+  { id:'f01', title:'Correr 42 km sin parar (maratón)',     cat:'Físicas', emoji:'🏃', diff:5, tip:'Plan de 16 semanas. El último kilómetro te hace otra persona.' },
+  { id:'f02', title:'Hacer 50 lagartijas seguidas',         cat:'Físicas', emoji:'💪', diff:3, tip:'Programa de 8 semanas. Empieza donde estás hoy.' },
+  { id:'f03', title:'Aprender a nadar correctamente',       cat:'Físicas', emoji:'🏊', diff:3, tip:'Técnica crol, respiración, vuelta de pared. 10 clases bastan.' },
+  { id:'f04', title:'Dormir 8h diarias por 30 días',        cat:'Físicas', emoji:'😴', diff:3, tip:'Apagar pantallas 1h antes. La luz azul destruye el sueño.' },
+  { id:'f05', title:'Subir una montaña',                    cat:'Físicas', emoji:'🏔️', diff:3, tip:'No necesita ser el Everest. Tu montaña local también cuenta.' },
+  { id:'f06', title:'Aprender defensa personal básica',     cat:'Físicas', emoji:'🥋', diff:2, tip:'Un mes de Krav Maga o judo. Cambia cómo habitas el mundo.' },
+  { id:'f07', title:'Mejorar tu postura conscientemente',   cat:'Físicas', emoji:'🧍', diff:2, tip:'Ejercicios de activación del core, estiramiento de pecho. 10 min/día.' },
+  { id:'f08', title:'Aprender a estirar bien',              cat:'Físicas', emoji:'🧘', diff:1, tip:'Rutina de 15 min post-entrenamiento. Tu yo de 50 años te lo agradecerá.' },
+  { id:'f09', title:'Hacer una rutina de movilidad por 60 días', cat:'Físicas', emoji:'🤸', diff:2, tip:'Animal flow o yoga básico. La movilidad es la riqueza del cuerpo.' },
+  { id:'f10', title:'Completar un reto de 30 días de ejercicio', cat:'Físicas', emoji:'📅', diff:2, tip:'Sin saltarte ni un día. La consistencia vence al talento.' },
+  { id:'f11', title:'Aprender a cocinar saludable de verdad', cat:'Físicas', emoji:'🥗', diff:2, tip:'5 recetas nutritivas que te gusten. Come lo que te nutre.' },
+  { id:'f12', title:'Hacer una semana sin azúcar añadida',  cat:'Físicas', emoji:'🚫', diff:3, tip:'Los primeros 3 días son los difíciles. Luego tu cuerpo agradece.' },
+  { id:'f13', title:'Aprender a respirar correctamente',    cat:'Físicas', emoji:'🌬️', diff:1, tip:'Técnica 4-7-8, respiración diafragmática. Cambia tu sistema nervioso.' },
+  { id:'f14', title:'Hacer ayuno intermitente por 30 días', cat:'Físicas', emoji:'⏱️', diff:2, tip:'16:8 es el más accesible. Tu cuerpo aprende a quemar grasa.' },
+  { id:'f15', title:'Terminar un reto de 100 días de hábito', cat:'Físicas', emoji:'🏆', diff:4, tip:'El que tú elijas. El proceso te cambia más que el resultado.' },
+  { id:'f16', title:'Aprender a manejar el estrés físicamente', cat:'Físicas', emoji:'🧊', diff:2, tip:'Cold shower, box breathing, journaling físico. Encuentra el tuyo.' },
+  { id:'f17', title:'Alcanzar tu peso objetivo',            cat:'Físicas', emoji:'⚖️', diff:4, tip:'Con salud, paciencia y sin castigos. El cuerpo responde al amor.' },
+  { id:'f18', title:'Hacer un mes sin alcohol',             cat:'Físicas', emoji:'🚱', diff:3, tip:'Sober October o Dry January. Nota cómo tu mente se aclara.' },
+  { id:'f19', title:'Aprender a tomar el sol correctamente', cat:'Físicas', emoji:'☀️', diff:1, tip:'Vitamina D, horarios seguros, sin quemarte. El sol es medicina.' },
+  { id:'f20', title:'Completar una carrera de 10K',         cat:'Físicas', emoji:'🏅', diff:3, tip:'Inscríbete antes de estar lista. La inscripción te obliga.' },
+
+  // ── FINANZAS / VIDA PRÁCTICA (25) ──
+  { id:'p01', title:'Tener fondo de emergencia (3 meses de gastos)', cat:'Finanzas', emoji:'🏦', diff:4, tip:'Calcula tus gastos fijos + variables. Ese número × 3 es tu meta.' },
+  { id:'p02', title:'Aprender a invertir (aunque sea básico)', cat:'Finanzas', emoji:'📈', diff:3, tip:'CETES, ETFs, fondos indexados. 1 hora de lectura te cambia la mentalidad.' },
+  { id:'p03', title:'Negociar un precio importante',        cat:'Finanzas', emoji:'🤝', diff:3, tip:'Salario, renta, proveedor. El "no" ya lo tienes; solo puedes ganar.' },
+  { id:'p04', title:'Crear una segunda fuente de ingresos', cat:'Finanzas', emoji:'💡', diff:4, tip:'Freelance, producto digital, venta de algo. Aunque sea $500 al mes.' },
+  { id:'p05', title:'Eliminar una deuda completamente',     cat:'Finanzas', emoji:'✂️', diff:3, tip:'Método bola de nieve: la más pequeña primero. La emoción de cerrarla impulsa.' },
+  { id:'p06', title:'Entender impuestos básicos',           cat:'Finanzas', emoji:'📋', diff:2, tip:'SAT, régimen fiscal, deducciones. Una hora con un contador lo aclara todo.' },
+  { id:'p07', title:'Hacer un presupuesto realista',        cat:'Finanzas', emoji:'📊', diff:1, tip:'Regla 50/30/20: necesidades, deseos, ahorro. Sencillo y funciona.' },
+  { id:'p08', title:'Aprender Excel útil',                  cat:'Finanzas', emoji:'📑', diff:2, tip:'Tablas dinámicas, VLOOKUP, gráficas. 5 funciones que resuelven el 80%.' },
+  { id:'p09', title:'Vender algo que ya no usas',           cat:'Finanzas', emoji:'🏷️', diff:1, tip:'Facebook Marketplace, Vinted, Mercado Libre. Convierte caos en cash.' },
+  { id:'p10', title:'Comprar algo usado inteligentemente',  cat:'Finanzas', emoji:'♻️', diff:1, tip:'Gadgets, ropa, muebles. El mercado de segunda mano es salvaje (en bueno).' },
+  { id:'p11', title:'Hacer un "no spend month"',            cat:'Finanzas', emoji:'💰', diff:3, tip:'Solo gastos esenciales por 30 días. Revela qué compras son hábito vs necesidad.' },
+  { id:'p12', title:'Leer un contrato antes de firmarlo',   cat:'Finanzas', emoji:'📄', diff:2, tip:'Cláusulas de salida, penalizaciones, plazos. Todo lo que no te explican.' },
+  { id:'p13', title:'Aprender a facturar correctamente',    cat:'Finanzas', emoji:'🧾', diff:2, tip:'CFDI, régimen, uso de factura. Un video de 20 min en YouTube basta.' },
+  { id:'p14', title:'Crear un CV sólido',                   cat:'Finanzas', emoji:'📝', diff:2, tip:'Una página, logros cuantificados, diseño limpio. Nada de "soy proactiva".' },
+  { id:'p15', title:'Aprender a cobrar tu trabajo',         cat:'Finanzas', emoji:'💵', diff:3, tip:'Precio justo = costos + tiempo + valor. No regales tu expertise.' },
+  { id:'p16', title:'Subir tus ingresos 10%',               cat:'Finanzas', emoji:'📉', diff:3, tip:'Conversación de aumento, cliente nuevo, subir tarifas. Date permiso.' },
+  { id:'p17', title:'Automatizar un gasto o ahorro',        cat:'Finanzas', emoji:'🤖', diff:1, tip:'SPEI automático a cuenta de ahorro el día de cobro. Sin esfuerzo.' },
+  { id:'p18', title:'Registrar todos tus gastos 30 días',   cat:'Finanzas', emoji:'📒', diff:2, tip:'App de finanzas o papel. El primer mes siempre sorprende.' },
+  { id:'p19', title:'Abrir una cuenta de inversión',        cat:'Finanzas', emoji:'🏛️', diff:2, tip:'GBM+, NVIO, Hey Banco. 15 minutos y listo.' },
+  { id:'p20', title:'Hacer un plan financiero a 5 años',    cat:'Finanzas', emoji:'🗓️', diff:3, tip:'Dónde quieres estar, cuánto necesitas, cómo llegas. Revisable cada año.' },
+  { id:'p21', title:'Poner un negocio y hacerlo exitoso',   cat:'Finanzas', emoji:'🚀', diff:5, tip:'Idea + validación + primer cliente + sistematización. En ese orden.' },
+  { id:'p22', title:'Aprender a hacer declaración anual',   cat:'Finanzas', emoji:'🗂️', diff:2, tip:'SAT en línea + contadora una vez. El segundo año ya sabes.' },
+  { id:'p23', title:'Construir un portafolio profesional',  cat:'Finanzas', emoji:'🖇️', diff:2, tip:'3 proyectos bien documentados > 20 mediocres. Calidad sobre cantidad.' },
+  { id:'p24', title:'Leer un libro de finanzas personales', cat:'Finanzas', emoji:'📚', diff:1, tip:'"Padre Rico Padre Pobre", "El hombre más rico de Babilonia". Empieza hoy.' },
+  { id:'p25', title:'Crear un sistema de organización personal', cat:'Finanzas', emoji:'🗃️', diff:2, tip:'Notion, papel o GTD. El sistema que uses es mejor que el perfecto.' },
+
+  // ── SOCIALES (10) ──
+  { id:'s01', title:'Aprender lenguaje corporal básico',    cat:'Sociales', emoji:'🧠', diff:2, tip:'Posturas de poder, microexpresiones, contacto visual. Libro de Joe Navarro.' },
+  { id:'s02', title:'Tener una conversación difícil pendiente', cat:'Sociales', emoji:'💬', diff:4, tip:'Esa que llevas meses aplazando. 15 minutos de incomodidad, meses de paz.' },
+  { id:'s03', title:'Hacer un amigo nuevo genuino',         cat:'Sociales', emoji:'🤝', diff:3, tip:'Clase, comunidad, evento. Las amistades adultas requieren iniciativa.' },
+  { id:'s04', title:'Pedir ayuda cuando la necesitas',      cat:'Sociales', emoji:'🆘', diff:3, tip:'Pedir ayuda es inteligencia, no debilidad. Practica una vez esta semana.' },
+  { id:'s05', title:'Establecer un límite que da miedo',    cat:'Sociales', emoji:'🚧', diff:4, tip:'El "no" dicho con calma es respeto propio. La incomodidad es temporal.' },
+  { id:'s06', title:'Reconectar con alguien importante',    cat:'Sociales', emoji:'📱', diff:2, tip:'Ese mensaje que llevas meses sin enviar. Mándalo hoy.' },
+  { id:'s07', title:'Hacer una presentación profesional',   cat:'Sociales', emoji:'📊', diff:3, tip:'Con slides, timing y Q&A. Practica frente al espejo primero.' },
+  { id:'s08', title:'Ser mentora de alguien',               cat:'Sociales', emoji:'🌱', diff:2, tip:'Compartes lo que ya sabes. Todos tenemos algo valioso que dar.' },
+  { id:'s09', title:'Unirte a una comunidad nueva',         cat:'Sociales', emoji:'👥', diff:1, tip:'Online o presencial. Donde aprendes y aportas a la vez.' },
+  { id:'s10', title:'Organizar una reunión de personas que no se conocen', cat:'Sociales', emoji:'🎊', diff:3, tip:'Ser el nodo conector. Invita personas de mundos distintos.' },
+
+  // ── MENTAL / CRECIMIENTO (5) ──
+  { id:'m01', title:'Escribir en un diario por 90 días seguidos', cat:'Mental', emoji:'📓', diff:3, tip:'5 minutos al despertar. No lo releas hasta que termines los 90 días.' },
+  { id:'m02', title:'Completar una terapia psicológica',    cat:'Mental', emoji:'🧩', diff:3, tip:'Al menos 3 meses. No esperes a estar en crisis para empezar.' },
+  { id:'m03', title:'Aprender a meditar (30 días)',         cat:'Mental', emoji:'🧘', diff:2, tip:'10 minutos diarios. Headspace, Insight Timer o silencio puro.' },
+  { id:'m04', title:'Hacer un retiro de silencio',          cat:'Mental', emoji:'🔇', diff:4, tip:'24-48 horas sin hablar, sin pantallas. Vipassana si puedes.' },
+  { id:'m05', title:'Identificar y trabajar tu patrón de sabotaje', cat:'Mental', emoji:'🔍', diff:5, tip:'¿Qué haces cuando estás a punto de conseguir algo bueno? Ahí está.' },
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+const SAVE_KEY = 'lili_quests_v1';
+let state = loadState();
+let currentFilter = 'all';
+let sortMode = 'default'; // default | alpha | diff | done
+
+function loadState() {
+  try {
+    const r = localStorage.getItem(SAVE_KEY);
+    if (r) {
+      const saved = JSON.parse(r);
+      // Merge: keep saved done/notes, fill in any new missions
+      const map = {};
+      saved.missions?.forEach(m => { map[m.id] = m; });
+      return {
+        missions: MISSIONS_RAW.map(raw => ({
+          ...raw,
+          done:  map[raw.id]?.done  ?? false,
+          notes: map[raw.id]?.notes ?? '',
+          doneDate: map[raw.id]?.doneDate ?? null,
+        }))
+      };
+    }
+  } catch {}
+  return { missions: MISSIONS_RAW.map(m => ({ ...m, done:false, notes:'', doneDate:null })) };
+}
+
+let saveTimer = null;
+function scheduleSave() {
+  document.getElementById('save-dot').style.background = 'var(--warn)';
+  document.getElementById('save-status').classList.add('saving');
+  document.getElementById('save-text').textContent = 'Guardando…';
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+    document.getElementById('save-status').classList.remove('saving');
+    document.getElementById('save-dot').style.background = 'var(--success)';
+    document.getElementById('save-text').textContent = 'Guardado ✓';
+  }, 700);
+}
+
+/* ═══════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════ */
+function getFiltered() {
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  let list = state.missions;
+
+  if (currentFilter === 'done')    list = list.filter(m => m.done);
+  else if (currentFilter === 'pending') list = list.filter(m => !m.done);
+  else if (currentFilter !== 'all') list = list.filter(m => m.cat === currentFilter);
+
+  if (q) list = list.filter(m => m.title.toLowerCase().includes(q) || m.cat.toLowerCase().includes(q) || m.tip?.toLowerCase().includes(q));
+
+  if (sortMode === 'alpha') list = [...list].sort((a,b) => a.title.localeCompare(b.title));
+  else if (sortMode === 'diff') list = [...list].sort((a,b) => b.diff - a.diff);
+  else if (sortMode === 'done') list = [...list].sort((a,b) => (b.done?1:0) - (a.done?1:0));
+
+  return list;
+}
+
+function renderMissions() {
+  const grid = document.getElementById('missions-grid');
+  const list = getFiltered();
+
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">No hay misiones que coincidan</div></div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map((m, i) => {
+    const catClass = 'cat-' + m.cat;
+    const chipClass = 'chip-' + m.cat;
+    const catEmoji = { Experiencias:'🌍', Físicas:'💪', Finanzas:'💰', Sociales:'🤝', Mental:'🧠' }[m.cat] || '⚡';
+    return `
+    <div class="mission-card ${catClass} ${m.done ? 'done' : ''}" id="mc-${m.id}" style="animation-delay:${Math.min(i*0.03, 0.5)}s" onclick="toggleMission('${m.id}')">
+      <div class="mission-top">
+        <div class="mission-emoji">${m.emoji}</div>
+        <div class="mission-info">
+          <div class="mission-title">${m.title}</div>
+          <span class="cat-chip ${chipClass}">${catEmoji} ${m.cat}</span>
+        </div>
+      </div>
+      ${m.tip ? `<div style="font-size:.76rem;font-style:italic;color:var(--text-muted);line-height:1.4;margin-top:2px;padding-left:50px">${m.tip}</div>` : ''}
+      <div class="mission-meta">
+        <div class="diff-dots" title="Dificultad ${m.diff}/5">
+          ${[1,2,3,4,5].map(n => `<div class="diff-dot ${n <= m.diff ? 'on' : ''}"></div>`).join('')}
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          ${m.done && m.doneDate ? `<span style="font-family:var(--font-m);font-size:.63rem;color:var(--success)">✓ ${m.doneDate}</span>` : ''}
+          <button class="mission-note-btn" onclick="event.stopPropagation();toggleNote('${m.id}')">
+            📝 ${m.notes ? 'Ver nota' : 'Nota'}
+          </button>
+        </div>
+      </div>
+      <div class="mission-note ${m.notes ? 'open' : ''}" id="mn-${m.id}" onclick="event.stopPropagation()">
+        <textarea class="note-input" rows="2" placeholder="Añade tu nota, fecha, recuerdo..."
+          oninput="updateNote('${m.id}',this.value)">${m.notes}</textarea>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateKPIs() {
+  const all = state.missions;
+  const done = all.filter(m => m.done).length;
+  const total = all.length;
+  const pct = Math.round((done/total)*100);
+
+  // Ring
+  const circumference = 314; // 2π×r = 2×3.14159×50 ≈ 314
+  const offset = circumference - (done/total)*circumference;
+  document.getElementById('main-ring').style.strokeDashoffset = offset;
+  document.getElementById('ring-pct').textContent = pct + '%';
+  document.getElementById('ring-done').textContent = `${done} / ${total}`;
+
+  // Numbers
+  document.getElementById('kpi-done').textContent  = done;
+  document.getElementById('kpi-pend').textContent  = total - done;
+  document.getElementById('kpi-exp').textContent   = all.filter(m => m.cat==='Experiencias' && m.done).length + '/' + all.filter(m=>m.cat==='Experiencias').length;
+  document.getElementById('kpi-fis').textContent   = all.filter(m => m.cat==='Físicas' && m.done).length + '/' + all.filter(m=>m.cat==='Físicas').length;
+  document.getElementById('kpi-fin').textContent   = all.filter(m => m.cat==='Finanzas' && m.done).length + '/' + all.filter(m=>m.cat==='Finanzas').length;
+  document.getElementById('kpi-men').textContent   = all.filter(m => m.cat==='Mental' && m.done).length + '/' + all.filter(m=>m.cat==='Mental').length;
+
+  // Category bars
+  const cats = [
+    { key:'Experiencias', emoji:'🌍', color:'var(--col-exp)' },
+    { key:'Físicas',      emoji:'💪', color:'var(--col-fis)' },
+    { key:'Finanzas',     emoji:'💰', color:'var(--col-fin)' },
+    { key:'Sociales',     emoji:'🤝', color:'var(--col-soc)' },
+    { key:'Mental',       emoji:'🧠', color:'var(--col-men)' },
+  ];
+  document.getElementById('cat-bars').innerHTML = cats.map(c => {
+    const total = all.filter(m => m.cat === c.key).length;
+    const done2  = all.filter(m => m.cat === c.key && m.done).length;
+    const pct2   = total > 0 ? Math.round((done2/total)*100) : 0;
+    const isActive = currentFilter === c.key;
+    return `
+    <div class="cat-bar-card ${isActive?'active-cat':''}" onclick="setFilter('${c.key}', null)" id="catcard-${c.key}">
+      <div class="cat-bar-top">
+        <div class="cat-bar-name" style="color:${c.color}">${c.emoji} ${c.key}</div>
+        <div class="cat-bar-count">${done2}/${total} &nbsp; <span style="color:${c.color};font-weight:700">${pct2}%</span></div>
+      </div>
+      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${pct2}%;background:linear-gradient(90deg,${c.color}80,${c.color})"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderAll() {
+  updateKPIs();
+  renderMissions();
+}
+
+/* ═══════════════════════════════════════════
+   ACTIONS
+═══════════════════════════════════════════ */
+function toggleMission(id) {
+  const m = state.missions.find(x => x.id === id);
+  if (!m) return;
+  m.done = !m.done;
+  if (m.done) {
+    m.doneDate = new Date().toLocaleDateString('es-MX', {day:'2-digit',month:'short',year:'numeric'});
+    showCelebration(m);
+  } else {
+    m.doneDate = null;
+    toast('↩️ Misión desmarcada');
+  }
+  scheduleSave();
+  renderAll();
+}
+
+function toggleNote(id) {
+  const el = document.getElementById('mn-' + id);
+  if (el) el.classList.toggle('open');
+}
+
+function updateNote(id, text) {
+  const m = state.missions.find(x => x.id === id);
+  if (m) { m.notes = text; scheduleSave(); }
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+  if (btn) { btn.classList.add('active'); }
+  else {
+    // called from cat bar card — find matching btn
+    const fbtn = document.querySelector(`.fbtn[data-filter="${filter}"]`);
+    if (fbtn) fbtn.classList.add('active');
+    else document.querySelector('.fbtn[data-filter="all"]').classList.add('active');
+  }
+  updateKPIs();
+  renderMissions();
+}
+
+function toggleSort() {
+  const modes = ['default','alpha','diff','done'];
+  const labels = ['Ordenar ↕','A–Z 🔤','Dificultad ⚡','Completadas ✅'];
+  const idx = (modes.indexOf(sortMode) + 1) % modes.length;
+  sortMode = modes[idx];
+  document.getElementById('sort-btn').textContent = labels[idx];
+  renderMissions();
+}
+
+/* ═══════════════════════════════════════════
+   CELEBRATION
+═══════════════════════════════════════════ */
+const CEL_MESSAGES = [
+  { title:'¡Misión Completada!', sub:'Has ganado experiencia de vida real. Eso no se puede comprar.' },
+  { title:'¡Desbloqueado!', sub:'Una nueva versión de ti acaba de aparecer.' },
+  { title:'¡Nivel Subido!', sub:'Cada misión cumplida es evidencia de quién eres.' },
+  { title:'¡Leyenda!', sub:'Pocas personas hacen lo que acabas de hacer.' },
+  { title:'¡Conquistada!', sub:'El miedo era más ruidoso que difícil. Ya lo sabes.' },
+];
+
+function showCelebration(mission) {
+  const msg = CEL_MESSAGES[Math.floor(Math.random() * CEL_MESSAGES.length)];
+  document.getElementById('cel-emoji').textContent = mission.emoji;
+  document.getElementById('cel-title').textContent = msg.title;
+  document.getElementById('cel-sub').innerHTML = `<strong style="color:var(--c3)">${mission.title}</strong><br><br>${msg.sub}`;
+  document.getElementById('cel-overlay').classList.add('open');
+  spawnConfetti();
+}
+
+function closeCelebration() {
+  document.getElementById('cel-overlay').classList.remove('open');
+  document.getElementById('confetti-wrap').innerHTML = '';
+}
+
+function spawnConfetti() {
+  const wrap = document.getElementById('confetti-wrap');
+  wrap.innerHTML = '';
+  const colors = ['#00ffff','#00c6c7','#8bffff','#b06bff','#ffca6b','#ff6b8a','#00ffba'];
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left     = Math.random() * 100 + 'vw';
+    piece.style.top      = '-10px';
+    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.width    = (Math.random() * 8 + 5) + 'px';
+    piece.style.height   = (Math.random() * 8 + 5) + 'px';
+    piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    piece.style.animationDelay   = (Math.random() * 0.5) + 's';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    wrap.appendChild(piece);
+  }
+  setTimeout(() => { wrap.innerHTML = ''; }, 4000);
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+function toast(msg) {
+  const d = document.createElement('div');
+  d.className = 'toast'; d.textContent = msg;
+  document.getElementById('toasts').appendChild(d);
+  setTimeout(() => { d.style.opacity='0'; d.style.transition='opacity .3s'; setTimeout(()=>d.remove(),300); }, 3000);
+}
+
+/* ═══════════════════════════════════════════
+   DATE
+═══════════════════════════════════════════ */
+function renderDate() {
+  document.getElementById('hdate').textContent =
+    new Date().toLocaleDateString('es-MX', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+renderDate();
+renderAll();
+</script>
+</body>
+</html>

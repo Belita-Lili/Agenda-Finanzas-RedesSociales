@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liliana — Hub Central 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --c1:#009092;--c2:#00c6c7;--c3:#00ffff;--c4:#8bffff;
+  --bg:#040f10;--bg3:#0a1e21;
+  --card:rgba(0,144,146,0.07);--card-b:rgba(0,198,199,0.18);
+  --text:#e8fdfd;--text-dim:rgba(139,255,255,0.45);--text-muted:rgba(139,255,255,0.28);
+  --danger:#ff6b8a;--warn:#ffca6b;--success:#00ffba;--violet:#b06bff;
+  --font-d:'Syne',sans-serif;--font-m:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-d);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+body::before{content:'';position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse 60% 50% at 15% 20%,rgba(0,144,146,.18) 0%,transparent 60%),
+             radial-gradient(ellipse 40% 40% at 85% 80%,rgba(0,198,199,.12) 0%,transparent 55%);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:0;
+  background-image:linear-gradient(rgba(0,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,255,.022) 1px,transparent 1px);
+  background-size:44px 44px;pointer-events:none}
+
+.wrap{position:relative;z-index:1;width:100%;max-width:1100px}
+
+.hero{text-align:center;margin-bottom:60px}
+.avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c3));
+  display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px;
+  box-shadow:0 0 0 2px rgba(0,255,255,.2),0 0 40px rgba(0,255,255,.3);animation:aring 3s ease-in-out infinite}
+@keyframes aring{0%,100%{box-shadow:0 0 0 2px rgba(0,255,255,.2),0 0 40px rgba(0,255,255,.3)}50%{box-shadow:0 0 0 4px rgba(0,255,255,.1),0 0 60px rgba(0,255,255,.5)}}
+.hero-name{font-size:clamp(2.4rem,6vw,4rem);font-weight:800;
+  background:linear-gradient(90deg,var(--c3),var(--c4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:-.02em;margin-bottom:8px}
+.hero-sub{font-family:var(--font-m);font-size:.85rem;color:var(--text-dim);letter-spacing:.12em}
+.hero-date{font-family:var(--font-m);font-size:.75rem;color:var(--text-muted);margin-top:6px}
+
+/* Global KPIs */
+.global-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:50px}
+.gkpi{background:var(--card);border:1px solid var(--card-b);border-radius:16px;padding:16px 18px;text-align:center;transition:all .22s}
+.gkpi:hover{border-color:rgba(0,255,255,.3);transform:translateY(-3px)}
+.gkpi-val{font-family:var(--font-m);font-size:1.7rem;color:var(--c3);text-shadow:0 0 16px rgba(0,255,255,.4);line-height:1}
+.gkpi-lbl{font-size:.65rem;color:var(--text-muted);margin-top:5px;letter-spacing:.06em;text-transform:uppercase}
+
+/* Dashboard cards */
+.dashboards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-bottom:40px}
+
+.dash-card{
+  position:relative;overflow:hidden;
+  background:var(--card);border:1px solid var(--card-b);
+  border-radius:24px;padding:32px 28px;
+  text-decoration:none;color:inherit;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  display:flex;flex-direction:column;gap:16px;
+}
+.dash-card::before{
+  content:'';position:absolute;inset:0;
+  opacity:0;transition:opacity .3s;
+  background:radial-gradient(ellipse 80% 80% at 50% 0%,rgba(0,255,255,.07),transparent);
+}
+.dash-card:hover{transform:translateY(-6px);border-color:rgba(0,255,255,.35);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.dash-card:hover::before{opacity:1}
+
+.dash-card.personal{ --accent:#00c6c7; }
+.dash-card.finanzas{ --accent:#b06bff; }
+.dash-card.redes   { --accent:#ff6b8a; }
+
+.dash-card.personal::after{ background:linear-gradient(135deg,rgba(0,144,146,.15),transparent); }
+.dash-card.finanzas::after{ background:linear-gradient(135deg,rgba(176,107,255,.15),transparent); }
+.dash-card.redes::after   { background:linear-gradient(135deg,rgba(255,107,138,.15),transparent); }
+.dash-card::after{content:'';position:absolute;inset:0;border-radius:24px;pointer-events:none}
+
+.dash-icon{
+  width:56px;height:56px;border-radius:16px;
+  background:rgba(0,255,255,.07);border:1px solid rgba(0,255,255,.15);
+  display:flex;align-items:center;justify-content:center;font-size:1.8rem;
+  transition:all .3s;
+}
+.dash-card.personal .dash-icon{border-color:rgba(0,198,199,.25)}
+.dash-card.finanzas .dash-icon{border-color:rgba(176,107,255,.25)}
+.dash-card.redes    .dash-icon{border-color:rgba(255,107,138,.25)}
+.dash-card:hover .dash-icon{transform:scale(1.1);box-shadow:0 0 20px rgba(0,255,255,.2)}
+
+.dash-title{font-size:1.3rem;font-weight:800;color:var(--text)}
+.dash-desc{font-size:.83rem;color:var(--text-dim);line-height:1.6}
+
+.dash-stats{display:flex;flex-direction:column;gap:8px}
+.dstat{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;background:rgba(0,255,255,.04);border-radius:8px;
+  border:1px solid rgba(0,255,255,.08)}
+.dstat-lbl{font-size:.72rem;color:var(--text-dim)}
+.dstat-val{font-family:var(--font-m);font-size:.8rem;color:var(--c3)}
+
+.dash-cta{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px;border-radius:12px;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  color:var(--bg);font-weight:700;font-size:.8rem;letter-spacing:.06em;
+  margin-top:auto;transition:all .22s;
+}
+.dash-card.finanzas .dash-cta{background:linear-gradient(135deg,#6c3483,var(--violet))}
+.dash-card.redes    .dash-cta{background:linear-gradient(135deg,#c0392b,var(--danger))}
+.dash-card:hover .dash-cta{box-shadow:0 6px 24px rgba(0,0,0,.4);transform:translateY(-1px)}
+
+/* Quick access bar */
+.quick-bar{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  flex-wrap:wrap;
+  padding:20px;background:var(--card);border:1px solid var(--card-b);border-radius:16px;
+}
+.qb-item{
+  font-family:var(--font-m);font-size:.72rem;letter-spacing:.05em;
+  padding:8px 16px;border-radius:40px;border:1px solid rgba(0,255,255,.15);
+  background:transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;
+  text-decoration:none;display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.qb-item:hover{border-color:var(--c2);color:var(--c4);background:rgba(0,255,255,.05)}
+
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--c1);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="avatar">🌸</div>
+    <div class="hero-name">Liliana</div>
+    <div class="hero-sub">⟡ &nbsp; Sistema Personal 2026 &nbsp; ⟡</div>
+    <div class="hero-date" id="hero-date"></div>
+  </div>
+
+  <!-- GLOBAL KPIs -->
+  <div class="global-kpis">
+    <div class="gkpi"><div class="gkpi-val" id="g-peso">—</div><div class="gkpi-lbl">Peso (kg)</div></div>
+    <div class="gkpi"><div class="gkpi-val" id="g-habitos">—</div><div class="gkpi-lbl">Hábitos hoy</div></div>
+    <div class="gkpi"><div class="gkpi-val" id="g-cursos">—</div><div class="gkpi-lbl">Cursos activos</div></div>
+    <div class="gkpi"><div class="gkpi-val" id="g-balance">—</div><div class="gkpi-lbl">Balance mes</div></div>
+    <div class="gkpi"><div class="gkpi-val" id="g-misiones">—</div><div class="gkpi-lbl">Misiones hechas</div></div>
+    <div class="gkpi"><div class="gkpi-val" id="g-ciclo">—</div><div class="gkpi-lbl">Día del ciclo</div></div>
+    <div class="gkpi"><div class="gkpi-val" id="g-ideas">—</div><div class="gkpi-lbl">Ideas creativas</div></div>
+    <div class="gkpi"><div class="gkpi-val" id="g-agua">—</div><div class="gkpi-lbl">Agua hoy</div></div>
+  </div>
+
+  <!-- DASHBOARDS -->
+  <div class="dashboards">
+
+    <a class="dash-card personal" href="personal.html">
+      <div class="dash-icon">🌸</div>
+      <div>
+        <div class="dash-title">Dashboard Personal</div>
+        <div class="dash-desc">Cuerpo, Gym, Aprendizaje, Actividades, Ciclo, Collage fotográfico y Misiones secundarias.</div>
+      </div>
+      <div class="dash-stats" id="ds-personal"></div>
+      <div class="dash-cta">Abrir Dashboard Personal →</div>
+    </a>
+
+    <a class="dash-card finanzas" href="finanzas.html">
+      <div class="dash-icon">💰</div>
+      <div>
+        <div class="dash-title">Dashboard Financiero</div>
+        <div class="dash-desc">Transacciones, presupuestos, metas de ahorro, habilidades financieras y análisis mensual.</div>
+      </div>
+      <div class="dash-stats" id="ds-finanzas"></div>
+      <div class="dash-cta">Abrir Dashboard Financiero →</div>
+    </a>
+
+    <a class="dash-card redes" href="redes.html">
+      <div class="dash-icon">📱</div>
+      <div>
+        <div class="dash-title">Dashboard de Redes</div>
+        <div class="dash-desc">Banco de ideas, calendario de publicaciones, métricas por plataforma y análisis de contenido.</div>
+      </div>
+      <div class="dash-stats" id="ds-redes"></div>
+      <div class="dash-cta">Abrir Dashboard de Redes →</div>
+    </a>
+
+  </div>
+
+  <!-- QUICK ACCESS -->
+  <div class="quick-bar">
+    <span style="font-size:.72rem;color:var(--text-muted);margin-right:6px">Acceso rápido:</span>
+    <a class="qb-item" href="personal.html#cuerpo">⚖️ Registrar peso</a>
+    <a class="qb-item" href="personal.html#gym">🏋️ Medidas gym</a>
+    <a class="qb-item" href="personal.html#aprendizaje">📚 Mis cursos</a>
+    <a class="qb-item" href="personal.html#ciclo">🌸 Ciclo</a>
+    <a class="qb-item" href="finanzas.html#trans">💸 Nueva transacción</a>
+    <a class="qb-item" href="redes.html#ideas">💡 Nueva idea</a>
+    <a class="qb-item" href="misiones-secundarias.html" target="_blank">🎯 Misiones</a>
+  </div>
+
+</div>
+
+<script>
+const KEY = 'lili_mega_v1';
+const QKEY = 'lili_quests_v1';
+
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; }
+}
+function loadQuests() {
+  try { return JSON.parse(localStorage.getItem(QKEY) || '{"missions":[]}'); } catch { return {missions:[]}; }
+}
+
+function init() {
+  const d = new Date();
+  document.getElementById('hero-date').textContent =
+    d.toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  const S = loadData();
+  const Q = loadQuests();
+
+  // Global KPIs
+  const peso = S.body?.history?.slice(-1)[0]?.peso;
+  document.getElementById('g-peso').textContent = peso ? peso.toFixed(1) : '—';
+
+  const hn = S.acts?.habits?.length || 0;
+  const today = d.getDay();
+  const dow = (today + 6) % 7;
+  const habDone = S.acts?.habits?.filter(h => h.d[dow] === 1).length || 0;
+  document.getElementById('g-habitos').textContent = hn ? `${habDone}/${hn}` : '—';
+
+  document.getElementById('g-cursos').textContent = S.learn?.courses?.length || 0;
+
+  const thisM = d.getMonth() + 1;
+  const inc = (S.finance?.transactions||[]).filter(t=>t.type==='income'&&new Date(t.date).getMonth()+1===thisM).reduce((s,t)=>s+t.amount,0);
+  const exp = (S.finance?.transactions||[]).filter(t=>t.type==='expense'&&new Date(t.date).getMonth()+1===thisM).reduce((s,t)=>s+t.amount,0);
+  document.getElementById('g-balance').textContent = '$'+(inc-exp).toLocaleString();
+
+  const mDone = Q.missions?.filter(m=>m.done).length || 0;
+  document.getElementById('g-misiones').textContent = `${mDone}/100`;
+
+  if (S.cycle?.s) {
+    const start = new Date(S.cycle.s);
+    const cd = ((Math.floor((d - start)/864e5)) % (S.cycle.l||28)) + 1;
+    const phases = {menstrual:'🩸',folicular:'🌱',ovulacion:'🌸',lutea:'🌙'};
+    const ph = cd<=(S.cycle.p||5)?'menstrual':cd<=13?'folicular':cd<=16?'ovulacion':'lutea';
+    document.getElementById('g-ciclo').textContent = `${phases[ph]} Día ${cd}`;
+  } else { document.getElementById('g-ciclo').textContent = '—'; }
+
+  document.getElementById('g-ideas').textContent = S.social?.ideas?.length || 0;
+  document.getElementById('g-agua').textContent = S.water?.ml ? S.water.ml + ' ml' : '—';
+
+  // Dashboard mini-stats
+  document.getElementById('ds-personal').innerHTML = [
+    ['⚖️ Peso actual', peso ? peso.toFixed(1)+' kg' : '—'],
+    ['📚 Cursos en progreso', S.learn?.courses?.length || 0],
+    ['🏃 Actividades totales', S.acts?.log?.length || 0],
+    ['🌸 Fase del ciclo', S.cycle?.s ? getCyclePhaseName(S) : '—'],
+  ].map(([l,v])=>`<div class="dstat"><span class="dstat-lbl">${l}</span><span class="dstat-val">${v}</span></div>`).join('');
+
+  document.getElementById('ds-finanzas').innerHTML = [
+    ['💰 Ingresos este mes', '$'+inc.toLocaleString()],
+    ['💸 Gastos este mes', '$'+exp.toLocaleString()],
+    ['🎯 Metas activas', S.finance?.goals?.length || 0],
+    ['📈 Transacciones', S.finance?.transactions?.length || 0],
+  ].map(([l,v])=>`<div class="dstat"><span class="dstat-lbl">${l}</span><span class="dstat-val">${v}</span></div>`).join('');
+
+  document.getElementById('ds-redes').innerHTML = [
+    ['💡 Ideas guardadas', S.social?.ideas?.length || 0],
+    ['📅 Publicaciones agendadas', S.social?.schedules?.length || 0],
+    ['🔥 Ideas alta prioridad', (S.social?.ideas||[]).filter(i=>i.pri?.includes('Alta')).length],
+    ['📌 Notas rápidas', S.social?.quickNotes?.length || 0],
+  ].map(([l,v])=>`<div class="dstat"><span class="dstat-lbl">${l}</span><span class="dstat-val">${v}</span></div>`).join('');
+}
+
+function getCyclePhaseName(S) {
+  const d = new Date();
+  const start = new Date(S.cycle.s);
+  const cd = ((Math.floor((d-start)/864e5))%(S.cycle.l||28))+1;
+  const pl = S.cycle.p||5;
+  if(cd<=pl) return '🩸 Menstrual';
+  if(cd<=13)  return '🌱 Folicular';
+  if(cd<=16)  return '🌸 Ovulación';
+  return '🌙 Lútea';
+}
+
+init();
+</script>
+</body>
+</html>
